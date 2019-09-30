@@ -2,6 +2,8 @@ package tech.bam.RNBraintreeDropIn;
 
 import android.app.Activity;
 import android.content.Intent;
+
+import com.braintreepayments.api.models.GooglePaymentRequest;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -17,6 +19,9 @@ import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.braintreepayments.api.models.CardNonce;
 import com.braintreepayments.api.models.ThreeDSecureInfo;
+import com.google.android.gms.wallet.TransactionInfo;
+import com.google.android.gms.wallet.WalletConstants;
+
 
 public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
 
@@ -46,6 +51,7 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
     }
 
     DropInRequest dropInRequest = new DropInRequest().clientToken(options.getString("clientToken"));
+    enableGooglePay(dropInRequest, options);
 
     if (options.hasKey("threeDSecure")) {
       final ReadableMap threeDSecureOptions = options.getMap("threeDSecure");
@@ -63,6 +69,23 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
 
     mPromise = promise;
     currentActivity.startActivityForResult(dropInRequest.getIntent(currentActivity), DROP_IN_REQUEST);
+  }
+
+  private void enableGooglePay(DropInRequest dropInRequest, ReadableMap options) {
+    String totalPrice = options.getString("totalPrice");
+    String currencyCode = options.getString("currencyCode");
+    String merchantId = options.getString("merchantId");
+    if(totalPrice != null && currencyCode != null && merchantId != null) {
+        GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
+                .transactionInfo(TransactionInfo.newBuilder()
+                        .setTotalPrice(totalPrice)
+                        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+                        .setCurrencyCode(currencyCode)
+                        .build())
+                .billingAddressRequired(true)
+                .googleMerchantId(merchantId);
+        dropInRequest.googlePaymentRequest(googlePaymentRequest);
+    }
   }
 
   private final ActivityEventListener mActivityListener = new BaseActivityEventListener() {
