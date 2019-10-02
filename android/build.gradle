@@ -34,4 +34,5 @@ repositories {
 dependencies {
     implementation 'com.braintreepayments.api:drop-in:4.4.0'
     implementation 'com.facebook.react:react-native:+'
+    implementation 'com.google.android.gms:play-services-wallet:18.0.0'
 }
