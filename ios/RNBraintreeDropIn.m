@@ -112,9 +112,9 @@ RCT_REMAP_METHOD(show,
         // We recommend collecting billing address information, at minimum
         // billing postal code, and passing that billing postal code with all
         // Apple Pay transactions as a best practice.
-//        if (@available(iOS 11.0, *)) {
-//            paymentRequest.requiredBillingContactFields = [NSSet setWithObject:PKContactFieldPostalAddress];
-//        }
+        if (@available(iOS 11.0, *)) {
+            paymentRequest.requiredBillingContactFields = [NSSet setWithObject:PKContactFieldPostalAddress];
+        }
 
         // Set other PKPaymentRequest properties here
         paymentRequest.merchantCapabilities = PKMerchantCapability3DS;
