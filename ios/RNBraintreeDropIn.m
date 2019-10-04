@@ -29,6 +29,10 @@ RCT_REMAP_METHOD(show,
 
     BTDropInRequest *request = [[BTDropInRequest alloc] init];
 
+    if (!options[@"disabledVaultManager"]) {
+        request.vaultManager = YES;
+    }
+
     NSDictionary* threeDSecureOptions = options[@"threeDSecure"];
     if (threeDSecureOptions) {
         NSNumber* threeDSecureAmount = threeDSecureOptions[@"amount"];

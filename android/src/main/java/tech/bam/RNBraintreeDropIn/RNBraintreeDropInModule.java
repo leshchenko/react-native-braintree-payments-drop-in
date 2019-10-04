@@ -50,7 +50,13 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    DropInRequest dropInRequest = new DropInRequest().clientToken(options.getString("clientToken"));
+    DropInRequest dropInRequest = new DropInRequest()
+            .clientToken(options.getString("clientToken"));
+
+    if (options.hasKey("disabledVaultManager")) {
+      dropInRequest.vaultManager(!options.getBoolean("disabledVaultManager"));
+    }
+
     enableGooglePay(dropInRequest, options);
 
     if (options.hasKey("threeDSecure")) {
@@ -63,8 +69,8 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
       isVerifyingThreeDSecure = true;
 
       dropInRequest
-      .amount(String.valueOf(threeDSecureOptions.getDouble("amount")))
-      .requestThreeDSecureVerification(true);
+              .amount(String.valueOf(threeDSecureOptions.getDouble("amount")))
+              .requestThreeDSecureVerification(true);
     }
 
     mPromise = promise;
@@ -76,15 +82,15 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
     String currencyCode = options.getString("currencyCode");
     String merchantId = options.getString("GPayMerchantId");
     if(totalPrice != null && currencyCode != null && merchantId != null) {
-        GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
-                .transactionInfo(TransactionInfo.newBuilder()
-                        .setTotalPrice(totalPrice)
-                        .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
-                        .setCurrencyCode(currencyCode)
-                        .build())
-                .billingAddressRequired(true)
-                .googleMerchantId(merchantId);
-        dropInRequest.googlePaymentRequest(googlePaymentRequest);
+      GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
+              .transactionInfo(TransactionInfo.newBuilder()
+                      .setTotalPrice(totalPrice)
+                      .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+                      .setCurrencyCode(currencyCode)
+                      .build())
+              .billingAddressRequired(true)
+              .googleMerchantId(merchantId);
+      dropInRequest.googlePaymentRequest(googlePaymentRequest);
     }
   }
 
