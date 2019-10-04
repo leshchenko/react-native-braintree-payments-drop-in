@@ -78,7 +78,7 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
   }
 
   private void enableGooglePay(DropInRequest dropInRequest, ReadableMap options) {
-    String totalPrice = options.getString("totalPrice");
+    String totalPrice = Double.toString(options.getDouble("totalPrice"));
     String currencyCode = options.getString("currencyCode");
     String merchantId = options.getString("GPayMerchantId");
     if(totalPrice != null && currencyCode != null && merchantId != null) {
