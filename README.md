@@ -126,7 +126,11 @@ For the API, see the [Flow typings](./index.js.flow).
 import BraintreeDropIn from 'react-native-braintree-payments-drop-in';
 
 BraintreeDropIn.show({
-  clientToken: 'token',
+  clientToken: 'CLIENT_TOKEN_GENERATED_ON_SERVER_SIDE',
+  totalPrice: '1.0',
+  currencyCode: 'EUR',
+  GPayMerchantId: 'GPAY_MERCHANT_ID',
+  companyName: 'COMPANY_NAME',
 })
 .then(result => console.log(result))
 .catch((error) => {
@@ -144,7 +148,11 @@ BraintreeDropIn.show({
 import BraintreeDropIn from 'react-native-braintree-payments-drop-in';
 
 BraintreeDropIn.show({
-  clientToken: 'token',
+  clientToken: 'CLIENT_TOKEN_GENERATED_ON_SERVER_SIDE',
+  totalPrice: '1.0',
+  currencyCode: 'EUR',
+  GPayMerchantId: 'GPAY_MERCHANT_ID',
+  companyName: 'COMPANY_NAME',
   threeDSecure: {
     amount: 1.0,
   },
