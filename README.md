@@ -131,6 +131,7 @@ BraintreeDropIn.show({
   currencyCode: 'EUR',
   GPayMerchantId: 'GPAY_MERCHANT_ID',
   companyName: 'COMPANY_NAME',
+  disabledVaultManager: false,
 })
 .then(result => console.log(result))
 .catch((error) => {
@@ -156,6 +157,7 @@ BraintreeDropIn.show({
   threeDSecure: {
     amount: 1.0,
   },
+  disabledVaultManager: false,
 })
 .then(result => console.log(result))
 .catch((error) => {
