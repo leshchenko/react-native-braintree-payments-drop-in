@@ -50,12 +50,13 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    DropInRequest dropInRequest = new DropInRequest()
-            .clientToken(options.getString("clientToken"));
+    boolean disabledVaultManager = !options.hasKey("disabledVaultManager")
+            || (options.hasKey("disabledVaultManager")
+            && !options.getBoolean("disabledVaultManager"));
 
-    if (options.hasKey("disabledVaultManager")) {
-      dropInRequest.vaultManager(!options.getBoolean("disabledVaultManager"));
-    }
+    DropInRequest dropInRequest = new DropInRequest()
+            .vaultManager(disabledVaultManager)
+            .clientToken(options.getString("clientToken"));
 
     enableGooglePay(dropInRequest, options);
 
