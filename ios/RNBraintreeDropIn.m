@@ -163,7 +163,7 @@ RCT_REMAP_METHOD(show,
 
             // If requested, address information is accessible in `payment` and may
             // also be sent to your server.
-//            NSLog(@"billingPostalCode = %@", payment.billingContact.postalAddress.postalCode);
+            NSLog(@"billingPostalCode = %@", payment.billingContact.postalAddress.postalCode);
 
             // Then indicate success or failure via the completion callback, e.g.
             NSMutableDictionary* jsResult = [NSMutableDictionary new];
@@ -184,7 +184,7 @@ RCT_REMAP_METHOD(show,
 - (void)paymentAuthorizationViewControllerDidFinish:(nonnull PKPaymentAuthorizationViewController *)controller {
     [self.reactRoot dismissViewControllerAnimated:YES completion:NULL];
     if (self.reject) {
-        self.reject(@"USER_CANCELLATION", @"The user cancelled", nil);
+        self.reject(@"APPLE_PAY_FAILED", @"Apple Pay failed", nil);
     }
     self.resolve = NULL;
     self.reject = NULL;
