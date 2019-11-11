@@ -160,6 +160,8 @@ RCT_REMAP_METHOD(show,
         if (tokenizedApplePayPayment) {
             // On success, send nonce to your server for processing.
             NSLog(@"nonce = %@", tokenizedApplePayPayment.nonce);
+            NSLog(@"description = %@", tokenizedApplePayPayment.localizedDescription);
+            NSLog(@"type = %@", tokenizedApplePayPayment.type);
 
             // If requested, address information is accessible in `payment` and may
             // also be sent to your server.
@@ -168,6 +170,8 @@ RCT_REMAP_METHOD(show,
             // Then indicate success or failure via the completion callback, e.g.
             NSMutableDictionary* jsResult = [NSMutableDictionary new];
             [jsResult setObject:tokenizedApplePayPayment.nonce forKey:@"nonce"];
+            [jsResult setObject:tokenizedApplePayPayment.localizedDescription forKey:@"type"];
+            [jsResult setObject:tokenizedApplePayPayment.type forKey:@"description"];
             self.resolve(jsResult);
             completion(PKPaymentAuthorizationStatusSuccess);
         } else {
