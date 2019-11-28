@@ -82,7 +82,7 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
     String totalPrice = Double.toString(options.getDouble("totalPrice"));
     String currencyCode = options.getString("currencyCode");
     String merchantId = options.getString("GPayMerchantId");
-    String env = merchantId != null ? "PRODUCTION" : "TEST";
+    String env = "test".equals(merchantId) ? "TEST" : "PRODUCTION";
     if(totalPrice != null && currencyCode != null && merchantId != null) {
       GooglePaymentRequest googlePaymentRequest = new GooglePaymentRequest()
               .transactionInfo(TransactionInfo.newBuilder()
