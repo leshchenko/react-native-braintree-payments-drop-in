@@ -25,7 +25,7 @@ In your `Podfile`, add:
 
 ```
 # uncomment the next line if you are on RN < 0.60
-#pod 'BraintreeDropIn', '~> 6.0'
+#pod 'BraintreeDropIn', '~> 7.5.0'
 
 # uncomment the next line to support credit card scanning
 # pod 'CardIO'
