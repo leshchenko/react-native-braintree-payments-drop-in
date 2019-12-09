@@ -1,6 +1,7 @@
 #import "RNBraintreeDropIn.h"
 @import PassKit;
 #import "BraintreeApplePay.h"
+#import "BTThreeDSecureRequest.h"
 
 @interface RNBraintreeDropIn() <PKPaymentAuthorizationViewControllerDelegate>
 
@@ -28,22 +29,36 @@ RCT_REMAP_METHOD(show,
     }
 
     BTDropInRequest *request = [[BTDropInRequest alloc] init];
+    request.threeDSecureVerification = YES;
 
     if (!options[@"disabledVaultManager"]) {
         request.vaultManager = YES;
     }
 
     NSDictionary* threeDSecureOptions = options[@"threeDSecure"];
-    if (threeDSecureOptions) {
-        NSNumber* threeDSecureAmount = threeDSecureOptions[@"amount"];
-        if (!threeDSecureAmount) {
-            reject(@"NO_3DS_AMOUNT", @"You must provide an amount for 3D Secure", nil);
-            return;
-        }
 
-        request.threeDSecureVerification = YES;
-        request.amount = [threeDSecureAmount stringValue];
-    }
+    BTThreeDSecureRequest *threeDSecureRequest = [[BTThreeDSecureRequest alloc] init];
+    threeDSecureRequest.amount = [NSDecimalNumber decimalNumberWithString:threeDSecureOptions[@"amount"]];
+    threeDSecureRequest.email = threeDSecureOptions[@"email"];
+    threeDSecureRequest.versionRequested = BTThreeDSecureVersion2;
+    
+    BTThreeDSecurePostalAddress *address = [BTThreeDSecurePostalAddress new];
+    address.givenName = threeDSecureOptions[@"firstName"];
+    address.surname = threeDSecureOptions[@"lastName"];
+    address.phoneNumber = threeDSecureOptions[@"phoneNumber"];
+    address.streetAddress = threeDSecureOptions[@"streetAddress"];
+    address.extendedAddress = threeDSecureOptions[@"streetAddress2"];
+    address.locality = threeDSecureOptions[@"city"];
+    address.region = threeDSecureOptions[@"region"];
+    address.postalCode = threeDSecureOptions[@"postalCode"];
+    address.countryCodeAlpha2 = threeDSecureOptions[@"countryCode"];
+    threeDSecureRequest.billingAddress = address;
+
+    BTThreeDSecureAdditionalInformation *additionalInformation = [BTThreeDSecureAdditionalInformation new];
+    additionalInformation.shippingAddress = address;
+    threeDSecureRequest.additionalInformation = additionalInformation;
+
+    request.threeDSecureRequest = threeDSecureRequest;
 
     BTDropInController *dropIn = [[BTDropInController alloc] initWithAuthorization:clientToken request:request handler:^(BTDropInController * _Nonnull controller, BTDropInResult * _Nullable result, NSError * _Nullable error) {
             [self.reactRoot dismissViewControllerAnimated:YES completion:nil];
