@@ -2,6 +2,7 @@
 @import PassKit;
 #import "BraintreeApplePay.h"
 #import "BTThreeDSecureRequest.h"
+#import "BTUIKAppearance.h"
 
 @interface RNBraintreeDropIn() <PKPaymentAuthorizationViewControllerDelegate>
 
@@ -27,6 +28,8 @@ RCT_REMAP_METHOD(show,
         reject(@"NO_CLIENT_TOKEN", @"You must provide a client token", nil);
         return;
     }
+
+    BTUIKAppearance.sharedInstance.postalCodeFormFieldKeyboardType = UIKeyboardTypeNamePhonePad;
 
     BTDropInRequest *request = [[BTDropInRequest alloc] init];
     request.threeDSecureVerification = YES;
