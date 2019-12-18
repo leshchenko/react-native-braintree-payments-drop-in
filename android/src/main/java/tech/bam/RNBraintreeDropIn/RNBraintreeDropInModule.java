@@ -52,12 +52,13 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
                         ThreeDSecureInfo threeDSecureInfo = cardNonce.getThreeDSecureInfo();
                         if (!threeDSecureInfo.isLiabilityShiftPossible()) {
                             mPromise.reject("3DSECURE_NOT_ABLE_TO_SHIFT_LIABILITY", "3D Secure liability cannot be shifted");
+                            return;
                         } else if (!threeDSecureInfo.isLiabilityShifted()) {
                             mPromise.reject("3DSECURE_LIABILITY_NOT_SHIFTED", "3D Secure liability was not shifted");
-                        } else {
-                            resolvePayment(paymentMethodNonce);
+                            return;
                         }
                     }
+                    resolvePayment(paymentMethodNonce);
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     mPromise.reject("USER_CANCELLATION", "The user cancelled");
                 } else {
@@ -86,10 +87,6 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
         boolean disabledVaultManager = !options.hasKey("disabledVaultManager")
                 || (options.hasKey("disabledVaultManager")
                 && !options.getBoolean("disabledVaultManager"));
-
-        DropInRequest dropInRequest = new DropInRequest()
-                .vaultManager(disabledVaultManager)
-                .clientToken(options.getString("clientToken"));
 
         final ReadableMap threeDSecureOptions = options.getMap("threeDSecure");
         if (threeDSecureOptions == null) {
@@ -130,6 +127,12 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
             return;
         }
 
+        DropInRequest dropInRequest = new DropInRequest()
+                .requestThreeDSecureVerification(true)
+                .threeDSecureRequest(threeDSecureRequest)
+                .vaultManager(disabledVaultManager)
+                .clientToken(options.getString("clientToken"));
+
         try {
             String amount = threeDSecureOptions.getString("amount");
             String currencyCode = options.getString("currencyCode");
@@ -150,23 +153,23 @@ public class RNBraintreeDropInModule extends ReactContextBaseJavaModule {
         } catch (Exception ignored) {
         }
 
-        dropInRequest
-                .requestThreeDSecureVerification(true)
-                .threeDSecureRequest(threeDSecureRequest);
-
         mPromise = promise;
         currentActivity.startActivityForResult(dropInRequest.getIntent(currentActivity), DROP_IN_REQUEST);
     }
 
 
     private void resolvePayment(PaymentMethodNonce paymentMethodNonce) {
-        WritableMap jsResult = Arguments.createMap();
-        jsResult.putString("nonce", paymentMethodNonce.getNonce());
-        jsResult.putString("type", paymentMethodNonce.getTypeLabel());
-        jsResult.putString("description", paymentMethodNonce.getDescription());
-        jsResult.putBoolean("isDefault", paymentMethodNonce.isDefault());
+        try {
+            WritableMap jsResult = Arguments.createMap();
+            jsResult.putString("nonce", paymentMethodNonce.getNonce());
+            jsResult.putString("type", paymentMethodNonce.getTypeLabel());
+            jsResult.putString("description", paymentMethodNonce.getDescription());
+            jsResult.putBoolean("isDefault", paymentMethodNonce.isDefault());
 
-        mPromise.resolve(jsResult);
+            mPromise.resolve(jsResult);
+        } catch (NullPointerException ignore){
+            mPromise.reject("PAYMENT_NONCE_RESOLVE_FAILED", "Failed to resolve payment nonce");
+        }
     }
 
     @NonNull
