@@ -85,7 +85,7 @@ RCT_REMAP_METHOD(show,
                         reject(@"NO_COMPANY_NAME", @"You must provide a company name", nil);
                         return;
                     }
-                    if (!options[@"totalPrice"]) {
+                    if (!threeDSecureOptions[@"amount"]) {
                         reject(@"NO_TOTAL_PRICE", @"You must provide a total price", nil);
                         return;
                     }
@@ -138,13 +138,15 @@ RCT_REMAP_METHOD(show,
             paymentRequest.requiredBillingContactFields = [NSSet setWithObject:PKContactFieldPostalAddress];
         }
 
+        NSDictionary* threeDSecureOptions = options[@"threeDSecure"];
+
         // Set other PKPaymentRequest properties here
         paymentRequest.merchantCapabilities = PKMerchantCapability3DS;
         paymentRequest.paymentSummaryItems =
         @[
-            //[PKPaymentSummaryItem summaryItemWithLabel:options[@"itemName"] amount:[NSDecimalNumber decimalNumberWithString:options[@"totalPrice"]]],
+            //[PKPaymentSummaryItem summaryItemWithLabel:options[@"itemName"] amount:[NSDecimalNumber decimalNumberWithString:threeDSecureOptions[@"amount"]]],
             // Add add'l payment summary items...
-            [PKPaymentSummaryItem summaryItemWithLabel:options[@"companyName"] amount:[NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", options[@"totalPrice"]]]]
+            [PKPaymentSummaryItem summaryItemWithLabel:options[@"companyName"] amount:[NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%@", threeDSecureOptions[@"amount"]]]]
         ];
 
         // Save the PKPaymentRequest or start the payment flow
